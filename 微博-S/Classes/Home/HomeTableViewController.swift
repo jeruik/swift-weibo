@@ -60,34 +60,56 @@ class HomeTableViewController: BaseTableViewController {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
+    /// 定义变量记录当前是上拉还是下拉
+    var pullupRefreshFlag = false
     /**
      获取微博数据
+     如果想调用一个私有的方法:
+     1.去掉private
+     2.@objc, 当做OC方法来处理
      */
-    func loadData()
+    @objc private func loadData()
     {
-        let since_id = statuses?.first?.id ?? 0
+        // 1.默认当做下拉处理
+        var since_id = statuses?.first?.id ?? 0
         
+        var max_id = 0
+        // 2.判断是否是上拉
+        if pullupRefreshFlag
+        {
+            since_id = 0
+            max_id = statuses?.last?.id ?? 0
+        }
         
-        Status.loadStatuses(since_id) { (models, error) -> () in
+        Status.loadStatuses(since_id, max_id: max_id) { (models, error) -> () in
             
             // 接收刷新
             self.refreshControl?.endRefreshing()
             
             if error != nil
             {
-                return;
+                return
             }
-            
-            if since_id > 0 {
-                
+            // 下拉刷新
+            if since_id > 0
+            {
+                // 如果是下拉刷新, 就将获取到的数据, 拼接在原有数据的前面
                 self.statuses = models! + self.statuses!
-                self.showNewStatusCount(models?.count ?? 0)
-            } else {
                 
+                // 显示刷新提醒
+                self.showNewStatusCount(models?.count ?? 0)
+            }else if max_id > 0
+            {
+                // 如果是上拉加载更多, 就将获取到的数据, 拼接在原有数据的后面
+                self.statuses = self.statuses! + models!
+            }
+            else
+            {
                 self.statuses = models
             }
         }
     }
+
     
     /**
      添加提醒横幅
@@ -140,6 +162,7 @@ class HomeTableViewController: BaseTableViewController {
     private func setupCustomRefreshView() {
         refreshControl = HomeRefreshControl()
         refreshControl?.addTarget(self, action: "loadData", forControlEvents: UIControlEvents.ValueChanged)
+
     }
     /**
      初始化导航条
@@ -223,6 +246,15 @@ extension HomeTableViewController
         // 1.获取cell
         let cell = tableView.dequeueReusableCellWithIdentifier(StatusTableViewCellIdentifier.cellID(status), forIndexPath: indexPath) as! StatusTableViewCell
         cell.status = status
+        
+        // 4.判断是否滚动到了最后一个cell
+        let count = statuses?.count ?? 0
+        if indexPath.row == (count - 1)
+        {
+            pullupRefreshFlag = true
+            //            print("上拉加载更多")
+            loadData()
+        }
         // 3.返回cell
         return cell
     }

@@ -28,6 +28,10 @@ class HomeRefreshControl: UIRefreshControl {
         addObserver(self, forKeyPath: "frame", options: NSKeyValueObservingOptions.New, context: nil)
     }
     
+    deinit {
+        removeObserver(self, forKeyPath: "frame")
+    }
+    
     /// 定义变量记录是否需要旋转监听
     private var rotationArrowFlag = false
     /// 定义变量记录当前是否正在执行圈圈动画
