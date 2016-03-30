@@ -79,9 +79,14 @@ class Status: NSObject {
     }
     
     /// 加载微博数据
-    class func loadStatuses(finished: (models:[Status]?, error:NSError?)->()){
+    class func loadStatuses(since_id:Int,finished: (models:[Status]?, error:NSError?)->()){
         let path = "2/statuses/home_timeline.json"
-        let params = ["access_token": UserAccount.loadAccount()!.access_token!]
+        var params = ["access_token": UserAccount.loadAccount()!.access_token!]
+        
+        // 下拉刷新
+        if since_id > 0 {
+            params["since_id"] = "\(since_id)"
+        }
         
         NetworkTools.shareNetworkTools().GET(path, parameters: params, success: { (_, JSON) -> Void in
             // 1.取出statuses key对应的数组 (存储的都是字典)

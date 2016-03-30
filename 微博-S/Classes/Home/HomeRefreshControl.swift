@@ -120,12 +120,5 @@ class homeRefreshView: UIView {
         tipView.hidden = false
         loadingView.layer.removeAllAnimations()
     }
-    
-    
-    
-    
-    
-    
-    
-    
+
 }

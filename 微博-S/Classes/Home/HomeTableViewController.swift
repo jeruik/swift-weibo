@@ -63,18 +63,60 @@ class HomeTableViewController: BaseTableViewController {
     /**
      获取微博数据
      */
-    private func loadData()
+    func loadData()
     {
-        Status.loadStatuses { (models, error) -> () in
+        let since_id = statuses?.first?.id ?? 0
+        
+        
+        Status.loadStatuses(since_id) { (models, error) -> () in
+            
+            // 接收刷新
+            self.refreshControl?.endRefreshing()
             
             if error != nil
             {
                 return;
             }
-            self.statuses = models
+            
+            if since_id > 0 {
+                
+                self.statuses = models! + self.statuses!
+                self.showNewStatusCount(models?.count ?? 0)
+            } else {
+                
+                self.statuses = models
+            }
         }
     }
     
+    /**
+     添加提醒横幅
+     */
+    
+    private func showNewStatusCount(count:Int) {
+        newStatusLabel.hidden = false
+        newStatusLabel.text = (count == 0) ? "没有刷新到新的微博数据" : "刷新到\(count)条微博"
+        
+//        let rect = newStatusLabel.frame
+//        UIView.animateWithDuration(2.0, animations: { () -> Void in
+//            UIView.setAnimationRepeatAutoreverses(true)
+//            self.newStatusLabel.frame = CGRectOffset(rect, 0, 1*rect.height)
+//            }) { (_) -> Void in
+//                self.newStatusLabel.frame = rect
+//        }
+        
+        UIView.animateWithDuration(2, animations: { () -> Void in
+            self.newStatusLabel.transform = CGAffineTransformMakeTranslation(0, self.newStatusLabel.frame.height)
+            }) { (_) -> Void in
+                UIView.animateWithDuration(2, delay: 1, options: UIViewAnimationOptions.CurveEaseIn, animations: { () -> Void in
+                    self.newStatusLabel.transform = CGAffineTransformIdentity
+                    }, completion: { (_) -> Void in
+                        self.newStatusLabel.hidden = true
+                })
+        }
+        
+    }
+     
     /**
      修改标题按钮的状态
      */
@@ -97,6 +139,7 @@ class HomeTableViewController: BaseTableViewController {
     }
     private func setupCustomRefreshView() {
         refreshControl = HomeRefreshControl()
+        refreshControl?.addTarget(self, action: "loadData", forControlEvents: UIControlEvents.ValueChanged)
     }
     /**
      初始化导航条
@@ -150,6 +193,16 @@ class HomeTableViewController: BaseTableViewController {
         let pa = PopoverAnimator()
         pa.presentFrame = CGRect(x: 100, y: 56, width: 200, height: 350)
         return pa
+    }()
+    private lazy var newStatusLabel: UILabel = {
+        
+        let lab = UILabel.creatLael(UIColor.whiteColor(), fontSize: 13)
+        lab.backgroundColor = UIColor.orangeColor()
+        lab.frame = CGRect(x: 0, y: 0, width: UIScreen.mainScreen().bounds.size.width, height: 44)
+        lab.hidden = true
+        lab.textAlignment = NSTextAlignment.Center
+        self.navigationController?.navigationBar.insertSubview(lab, atIndex: 0)
+        return lab
     }()
     // MARK: - 微博行高的缓存
     var rowCache:[Int:CGFloat] = [Int: CGFloat]()
