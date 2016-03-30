@@ -51,19 +51,28 @@ class Status: NSObject {
         didSet{
             // 1.初始化数组
             storedPicURLS = [NSURL]()
+            storedLargePicURLS = [NSURL]()
+            
             // 2遍历取出所有的图片路径字符串
             for dict in pic_urls!
             {
-                if let urlStr = dict["thumbnail_pic"]
+                if let urlStr = dict["thumbnail_pic"] as? String
                 {
-                    // 将字符串转换为URL保存到数组中
-                    storedPicURLS?.append(NSURL(string: urlStr as! String)!)
+                    // 1.将字符串转换为URL保存到数组中
+                    storedPicURLS!.append(NSURL(string: urlStr)!)
+                    
+                    // 2.处理大图
+                    let largeURLStr = urlStr.stringByReplacingOccurrencesOfString("thumbnail", withString: "large")
+                    storedLargePicURLS!.append(NSURL(string: largeURLStr)!)
+                    
                 }
             }
         }
     }
     /// 保存当前微博所有配图的URL
     var storedPicURLS: [NSURL]?
+    /// 保存当前微博所有配图"大图"的URL
+    var storedLargePicURLS: [NSURL]?
     
     /// 用户信息
     var user: User?
@@ -77,9 +86,14 @@ class Status: NSObject {
         {
             return retweeted_status != nil ? retweeted_status?.storedPicURLS : storedPicURLS
     }
+    /// 定义一个计算属性, 用于返回原创或者转发配图的大图URL数组
+    var LargePictureURLS:[NSURL]?
+        {
+            return retweeted_status != nil ? retweeted_status?.storedLargePicURLS : storedLargePicURLS
+    }
     
     /// 加载微博数据
-    class func loadStatuses(since_id:Int,max_id: Int, finished: (models:[Status]?, error:NSError?)->()){
+    class func loadStatuses(since_id: Int, max_id: Int, finished: (models:[Status]?, error:NSError?)->()){
         let path = "2/statuses/home_timeline.json"
         var params = ["access_token": UserAccount.loadAccount()!.access_token!]
         
@@ -112,6 +126,12 @@ class Status: NSObject {
     /// 缓存配图
     class func cacheStatusImages(list: [Status], finished: (models:[Status]?, error:NSError?)->()) {
         
+        if list.count == 0
+        {
+            finished(models: list, error: nil)
+            return
+        }
+        
         // 1.创建一个组
         let group = dispatch_group_create()
         
@@ -119,11 +139,7 @@ class Status: NSObject {
         for status in list
         {
             // 1.1判断当前微博是否有配图, 如果没有就直接跳过
-            //            if status.storedPicURLS == nil{
-            //                continue
-            //            }
             // Swift2.0新语法, 如果条件为nil, 那么就会执行else后面的语句
-            //            status.storedPicURLS = nil
             guard let _ = status.pictureURLS else
             {
                 continue

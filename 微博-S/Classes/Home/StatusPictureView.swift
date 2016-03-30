@@ -24,6 +24,7 @@ class StatusPictureView: UICollectionView {
         registerClass(PictureViewCell.self, forCellWithReuseIdentifier: XMGPictureViewCellReuseIdentifier)
         
         dataSource = self
+        delegate = self
         pictureLayout.minimumInteritemSpacing = 10
         pictureLayout.minimumLineSpacing = 10
     }
@@ -110,12 +111,21 @@ class StatusPictureView: UICollectionView {
         }
         
         // MARK: - 懒加载
-        private lazy var iconImageView: UIImageView = UIImageView()
+        private lazy var iconImageView: UIImageView = {
+            let icon = UIImageView()
+            icon.userInteractionEnabled = true
+            return icon
+        }()
     }
+// MARK: - 通知名
+/// 选中图片的通知名称
+let XMGStatusPictureViewSelected = "XMGStatusPictureViewSelected"
+/// 当前选中图片的索引对应的key
+let XMGStatusPictureViewIndexKey = "XMGStatusPictureViewIndexKey"
+/// 需要展示的所有图片对应的key
+let XMGStatusPictureViewURLsKey = "XMGStatusPictureViewURLsKey"
 
-
-
-extension StatusPictureView: UICollectionViewDataSource {
+extension StatusPictureView: UICollectionViewDataSource,UICollectionViewDelegate {
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(XMGPictureViewCellReuseIdentifier, forIndexPath: indexPath) as! PictureViewCell
         cell.imageUrl = status?.storedPicURLS![indexPath.item]
@@ -124,6 +134,13 @@ extension StatusPictureView: UICollectionViewDataSource {
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return status?.storedPicURLS?.count ?? 0
+    }
+    
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        
+        let info = [XMGStatusPictureViewIndexKey : indexPath, XMGStatusPictureViewURLsKey : status!.LargePictureURLS!]
+        NSNotificationCenter.defaultCenter().postNotificationName(XMGStatusPictureViewSelected, object: self, userInfo: info)
+        
     }
 }
 
