@@ -39,6 +39,7 @@
 		C93877C81CAB8CE000D42104 /* HomeRefreshControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93877C71CAB8CE000D42104 /* HomeRefreshControl.swift */; };
 		C93877CA1CAB8CED00D42104 /* HomeRefreshControl.xib in Resources */ = {isa = PBXBuildFile; fileRef = C93877C91CAB8CED00D42104 /* HomeRefreshControl.xib */; };
 		C93877CD1CABE7D300D42104 /* PhotoBrowserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93877CC1CABE7D300D42104 /* PhotoBrowserController.swift */; };
+		C93877CF1CAC0A7000D42104 /* PhotoBrowserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93877CE1CAC0A7000D42104 /* PhotoBrowserCell.swift */; };
 		C98FA5E01C9BDDD800640F72 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98FA5DF1C9BDDD800640F72 /* WelcomeViewController.swift */; };
 		C98FA6111C9FD0B200640F72 /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98FA6101C9FD0B200640F72 /* Status.swift */; };
 		C98FA6131C9FEED600640F72 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98FA6121C9FEED600640F72 /* User.swift */; };
@@ -112,6 +113,7 @@
 		C93877C71CAB8CE000D42104 /* HomeRefreshControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeRefreshControl.swift; sourceTree = "<group>"; };
 		C93877C91CAB8CED00D42104 /* HomeRefreshControl.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HomeRefreshControl.xib; sourceTree = "<group>"; };
 		C93877CC1CABE7D300D42104 /* PhotoBrowserController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoBrowserController.swift; sourceTree = "<group>"; };
+		C93877CE1CAC0A7000D42104 /* PhotoBrowserCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoBrowserCell.swift; sourceTree = "<group>"; };
 		C98FA5DF1C9BDDD800640F72 /* WelcomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
 		C98FA6101C9FD0B200640F72 /* Status.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Status.swift; sourceTree = "<group>"; };
 		C98FA6121C9FEED600640F72 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -345,6 +347,7 @@
 			isa = PBXGroup;
 			children = (
 				C93877CC1CABE7D300D42104 /* PhotoBrowserController.swift */,
+				C93877CE1CAC0A7000D42104 /* PhotoBrowserCell.swift */,
 			);
 			name = photoBrowserController;
 			sourceTree = "<group>";
@@ -584,6 +587,7 @@
 				C9C8CB591C8FF04C002CA179 /* UIBarButtonItem+Category.swift in Sources */,
 				C9080EA91C9956D900B83026 /* NetworkTools.swift in Sources */,
 				C9080EA71C994F3300B83026 /* OAuthViewController.swift in Sources */,
+				C93877CF1CAC0A7000D42104 /* PhotoBrowserCell.swift in Sources */,
 				C9080EAD1C99643C00B83026 /* String+Category.swift in Sources */,
 				C90046CD1CA4E46800383E84 /* StatusTableViewCell.swift in Sources */,
 				C9C8CB6D1C927BF2002CA179 /* QRCodeCardViewController.swift in Sources */,
