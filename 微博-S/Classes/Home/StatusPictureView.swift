@@ -90,6 +90,11 @@ class StatusPictureView: UICollectionView {
         var imageUrl:NSURL? {
             didSet {
                 iconImageView.sd_setImageWithURL(imageUrl)
+                if ((imageUrl?.absoluteString)! as NSString).pathExtension.lowercaseString == "gif" {
+                    gitImageView.hidden = false
+                } else {
+                    gitImageView.hidden = true
+                }
             }
         }
         
@@ -115,6 +120,11 @@ class StatusPictureView: UICollectionView {
             let icon = UIImageView()
             icon.userInteractionEnabled = true
             return icon
+        }()
+        private lazy var gitImageView: UIImageView = {
+            let iv = UIImageView(image: UIImage(named: "avatar_vgirl"))
+            iv.hidden = true
+            return iv
         }()
     }
 // MARK: - 通知名
