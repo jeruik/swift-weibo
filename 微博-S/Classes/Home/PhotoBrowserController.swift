@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SVProgressHUD
 
 private let photoBrowserCellReuseIdentifier = "pictureCell"
 
@@ -76,7 +77,7 @@ class PhotoBrowserController: UIViewController {
         return btn
     }()
     
-    private lazy var collectionView: UICollectionView = UICollectionView(frame: CGRectZero, collectionViewLayout: UICollectionViewLayout())
+    private lazy var collectionView: UICollectionView = UICollectionView(frame: CGRectZero, collectionViewLayout: PhotoBrowserLayout())
     
     // MARK: - actions
     func close()
@@ -85,13 +86,28 @@ class PhotoBrowserController: UIViewController {
     }
     func save()
     {
-        print(__FUNCTION__)
+        // 获得当前正在显示cell的索引
+        let index = collectionView.indexPathsForVisibleItems().last!
+        let cell = collectionView.cellForItemAtIndexPath(index) as! PhotoBrowserCell
+        
+        // 保存图片
+        let image = cell.iconView.image
+        UIImageWriteToSavedPhotosAlbum(image!, self, "image:didFinishSavingWithError:contextInfo:", nil)
     }
-
+    
+    func image(image:UIImage, didFinishSavingWithError error:NSError?, contextInfo:AnyObject) {
+        if error != nil
+        {
+            SVProgressHUD.showErrorWithStatus("保存失败", maskType: SVProgressHUDMaskType.Black)
+        }else
+        {
+            SVProgressHUD.showSuccessWithStatus("保存成功", maskType: SVProgressHUDMaskType.Black)
+        }
+    }
 }
 
 
-extension PhotoBrowserController : UICollectionViewDataSource
+extension PhotoBrowserController : UICollectionViewDataSource,PhotoBrowserCellDelegate
 {
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return pictureURLs?.count ?? 0
@@ -103,8 +119,12 @@ extension PhotoBrowserController : UICollectionViewDataSource
         
         cell.backgroundColor = UIColor.whiteColor()
         cell.imageURL = pictureURLs![indexPath.item]
-        
+        cell.photoDelegate = self
         return cell
+    }
+    
+    func photoBrowserCellDidClose(cell: PhotoBrowserCell) {
+        dismissViewControllerAnimated(true, completion: nil)
     }
 }
 
